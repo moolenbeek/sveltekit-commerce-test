@@ -2,7 +2,7 @@
 	import "../app.css";
 	import { ModeWatcher } from "mode-watcher";
 	import { Button } from "$lib/components/ui/button";
-	import { Sun, Moon } from "lucide-svelte";
+	import { Sun, Moon, ShoppingCart } from "lucide-svelte";
 	import { onMount } from "svelte";
 	import type { PageData } from "./$types";
 	export let data: PageData;
@@ -47,6 +47,9 @@
 					{:else}
 						<Moon class="h-[1.2rem] w-[1.2rem]" />
 					{/if}
+				</Button>
+				<Button variant="ghost" size="icon" on:click={() => window.location.href = '/cart'}>
+					<ShoppingCart class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
 			</div>
 		</div>
