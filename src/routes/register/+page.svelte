@@ -3,10 +3,26 @@
 	import { Button } from "$lib/components/ui/button/index";
 	import { Input } from "$lib/components/ui/input/index";
 	import { superForm } from "sveltekit-superforms";
+	import { onMount } from 'svelte';
 	export let data;
 
-	// Client API:
 	const { form, errors, enhance } = superForm(data.form);
+
+	let formElement: HTMLFormElement;
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Tab' && !formElement.contains(document.activeElement)) {
+			event.preventDefault();
+			document.getElementById('name')?.focus();
+		}
+	}
+
+	onMount(() => {
+		window.addEventListener('keydown', handleKeydown);
+		return () => {
+			window.removeEventListener('keydown', handleKeydown);
+		};
+	});
 </script>
 
 <div class="flex items-center justify-center pt-16">
@@ -17,7 +33,7 @@
 				>Already have an account? <a href="/login" class="text-primary">Login</a></Card.Description
 			>
 		</Card.Header>
-		<form method="POST" use:enhance>
+		<form method="POST" use:enhance bind:this={formElement}>
 			<Card.Content>
 				<Input type="text" id="name" name="name" placeholder="Username" bind:value={$form.name} required />
 				{#if $errors.name}<p class="text-red-500 text-sm mt-1">{$errors.name}</p>{/if}
