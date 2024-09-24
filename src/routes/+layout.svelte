@@ -2,12 +2,16 @@
 	import "../app.css";
 	import { ModeWatcher } from "mode-watcher";
 	import { Button } from "$lib/components/ui/button";
-	import { Sun, Moon, ShoppingCart } from "lucide-svelte";
+	import { Sun, Moon, ShoppingCart, Menu } from "lucide-svelte";
+	import { Sheet, SheetContent, SheetTrigger } from "$lib/components/ui/sheet";
 	import { onMount } from "svelte";
 	import type { PageData } from "./$types";
+	import { writable } from 'svelte/store';
+
 	export let data: PageData;
 
 	let isDarkMode: boolean;
+	let isMenuOpen = writable(false);
 
 	onMount(() => {
 		isDarkMode = document.documentElement.classList.contains("dark");
@@ -23,6 +27,10 @@
 	}
 
 	console.log(data.user);
+
+	function toggleMenu() {
+		isMenuOpen.update(value => !value);
+	}
 </script>
 
 <ModeWatcher />
@@ -32,14 +40,16 @@
 		<div class="flex h-16 items-center justify-between">
 			<a href="/" class="text-xl font-bold">website</a>
 			<div class="flex items-center space-x-4">
-				{#if !data.user}
-					<a href="/login" class="text-sm font-medium hover:text-primary">Login</a>
-				{:else}
-					<a href="/">{data.user.name}</a>
-					<form action="/logout" method="POST">
-						<Button type="submit" class="outline">Logout</Button>
-					</form>
-				{/if}
+				<div class="hidden sm:flex items-center space-x-4">
+					{#if !data.user}
+						<a href="/login" class="text-sm font-medium hover:text-primary">Login</a>
+					{:else}
+						<a href="/">{data.user.name}</a>
+						<form action="/logout" method="POST">
+							<Button type="submit" class="outline">Logout</Button>
+						</form>
+					{/if}
+				</div>
 				<Button variant="ghost" size="icon" on:click={toggleDarkMode}>
 					{#if isDarkMode}
 						<Sun class="h-[1.2rem] w-[1.2rem]" />
@@ -50,6 +60,27 @@
 				<Button variant="ghost" size="icon" on:click={() => window.location.href = '/cart'}>
 					<ShoppingCart class="h-[1.2rem] w-[1.2rem]" />
 				</Button>
+				<div class="sm:hidden">
+					<Sheet bind:open={$isMenuOpen}>
+						<SheetTrigger asChild>
+							<Button variant="ghost" size="icon" on:click={toggleMenu}>
+								<Menu class="h-[1.2rem] w-[1.2rem]" />
+							</Button>
+						</SheetTrigger>
+						<SheetContent>
+							<nav class="flex flex-col space-y-4">
+								{#if !data.user}
+									<a href="/login" class="text-sm font-medium hover:text-primary">Login</a>
+								{:else}
+									<a href="/">{data.user.name}</a>
+									<form action="/logout" method="POST">
+										<Button type="submit" class="outline w-full">Logout</Button>
+									</form>
+								{/if}
+							</nav>
+						</SheetContent>
+					</Sheet>
+				</div>
 			</div>
 		</div>
 	</div>
