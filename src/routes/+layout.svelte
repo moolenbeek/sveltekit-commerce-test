@@ -26,8 +26,6 @@
 		document.documentElement.classList.toggle("dark", isDarkMode);
 	}
 
-	console.log(data.user);
-
 	function toggleMenu() {
 		isMenuOpen.update(value => !value);
 	}
